@@ -12,7 +12,7 @@ class FraudDetector
     @id_number = 0
   end
 
-  DB = SQLite3::Database.open('app/db.sqlite')
+  DB = SQLite3::Database.open('lib/db.sqlite')
 
   def fraudulent?
     # TODO. Return true if they are fraudulent.
@@ -81,8 +81,7 @@ class FraudDetector
       ON #{@id_number} = credit_cards.user_id;")[0][0]
   end
 
-  # ----------------------------------------------------------------------------
-
+  # Additional methods
   def check_name
     DB.execute("SELECT * FROM users
       WHERE last_name = '#{@name_upper}'
@@ -114,8 +113,4 @@ class FraudDetector
     year = two_digit_year(query_card_year) if query_card_year.length == 4
     return true if month == expiry_date[0] && year == expiry_date[1]
   end
-
-  customer = FraudDetector.new('smith', 'SW18 3FR', 7835, '02/2020')
-
-  p customer.fraudulent?
 end
