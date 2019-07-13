@@ -16,7 +16,7 @@ class FraudDetector
 
   def fraudulent?
     # TODO. Return true if they are fraudulent.
-    true if name_postcode == true || name_card == true || postcode_card == true
+    name_postcode == true || name_card == true || postcode_card == true ? true : false
   end
 
   private
@@ -81,13 +81,13 @@ class FraudDetector
       ON #{@id_number} = credit_cards.user_id;")[0][0]
   end
 
-  # Additional methods
   def check_name
     DB.execute("SELECT * FROM users
       WHERE last_name = '#{@name_upper}'
       OR last_name = '#{@name_lower}'")
   end
 
+  # Additional methods
   def two_digit_month(expiry_month)
     "0#{expiry_month}"
   end
@@ -96,7 +96,7 @@ class FraudDetector
     expiry_year.gsub(/^.{0,2}/, '')
   end
 
-  def split_expiry(expiry)
+  def split_expiry
     expiry = @card_expiry.split('/')
     expiry[0] = two_digit_month(expiry[0]) if expiry[0].length == 1
     expiry[1] = two_digit_year(expiry[1]) if expiry[1].length == 4
@@ -104,7 +104,7 @@ class FraudDetector
   end
 
   def check_whole_card
-    expiry_date = split_expiry(@card_expiry)
+    expiry_date = split_expiry
     month = query_card_month
     year = query_card_year
     return true if query_card_month == expiry_date[0] && query_card_year == expiry_date[1]
